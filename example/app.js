@@ -48,7 +48,7 @@ BUS.emit('gui', {
     },
     addproduct: {
       title: 'Add new Product',
-      supportedlocales: {
+      producttype: {
         type: 'select',
         label: 'Product Type',
         multiple: true,
