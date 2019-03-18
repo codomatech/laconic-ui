@@ -4,8 +4,7 @@
     <meta charset="utf-8" />
     <title>interface in vue.js</title>
     <link rel="stylesheet" href="style/index.css" />
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.2/dist/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-router@3.0.2/dist/vue-router.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -30,19 +29,11 @@
     />
     <script src="lib/std/eev.min.js" type="text/javascript"></script>
     <script type="text/javascript">
-      var $interface = {
-        bus: new Eev(),
-        state: {
-          dsources: {
-            //productstable: ['a', 'b', 'c'],
-          }
-        }
-      }
     </script>
   </head>
   <body>
     <div id="app">
-      <v-app id="inspire">
+      <v-app>
         <v-navigation-drawer fixed v-model="drawer" app>
           <app-list></app-list>
         </v-navigation-drawer>
@@ -60,14 +51,7 @@
       </v-app>
     </div>
 
-    <script src="./lib/Store/Store.js"></script>
-    <script src="./lib/controlles/BUSEventHandler.js"></script>
-    <script src="./example/app.js"></script>
-    <script src="./lib/components/static-Components.js"></script>
-    <script src="./lib/components/dynamic-Components.js"></script>
-    <script src="./lib/controlles/rendering.js"></script>
-    <script src="./lib/components/patterns.js"></script>
-    <script src="./lib/router/router.js"></script>
-    <script src="./lib/interface.js"></script>
+    <script src="dist/interface.min.js"></script>
+    <script src="example/app.js"></script>
   </body>
 </html>
