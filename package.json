@@ -1,4 +1,14 @@
 {
+  "name": "interface.js",
+  "version": "0.0.1",
+  "description": "Declarative UI library to create apps *fast*.",
+  "main": "dist/interface.min.js",
+  "unpkg": "interface.min.js",
+  "jsdelivr": "interface.min.js",
+  "files": [
+    "lib",
+    "dist/*.js"
+  ],
   "scripts": {
     "build": "rollup lib/interface.js --format iife --name '$interface'  --file dist/interface.min.js"
   },
