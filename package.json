@@ -2,7 +2,7 @@
   "name": "interface.js",
   "version": "0.0.1",
   "description": "Declarative UI library to create apps *fast*.",
-  "main": "dist/interface.min.js",
+  "main": "lib/interface.js",
   "unpkg": "interface.min.js",
   "jsdelivr": "interface.min.js",
   "files": [
