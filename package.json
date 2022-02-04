@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "build": "rollup lib/interface.js --format iife --name '$interface'  --file dist/interface.min.js"
+  },
+  "devDependencies": {
+    "rollup": "^2.67.0"
+  }
+}
