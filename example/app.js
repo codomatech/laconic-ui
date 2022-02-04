@@ -30,7 +30,7 @@ $interface.bus.emit('gui', {
         $interface.bus.emit('gui', {
           op: 'notify',
           status: 'success',
-          message: 'department saved successfully'
+          message: 'settings saved successfully'
         })
       }
     },
@@ -54,7 +54,7 @@ $interface.bus.emit('gui', {
         $interface.bus.emit('gui', {
           op: 'notify',
           status: 'warn',
-          message: 'department saved successfully'
+          message: 'product saved successfully'
         })
       }
     },
@@ -78,7 +78,7 @@ $interface.bus.emit('gui', {
         $interface.bus.emit('gui', {
           op: 'notify',
           status: 'danger',
-          message: 'department saved successfully'
+          message: 'product saved successfully'
         })
       }
     },
@@ -127,7 +127,7 @@ $interface.bus.emit('gui', {
     header: {
       size: '40px',
       imgSrc:
-        'https://s2.logaster.com/static/v3/img/first_step_seo/example-2.png',
+        'https://cdn.cdnlogo.com/logos/c/58/cloudlinux.svg',
       title: 'Example App'
     },
     footer: {
