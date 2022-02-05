@@ -39,7 +39,7 @@ $interface.bus.emit('gui', {
       producttype: {
         type: 'select',
         label: 'Product Type',
-        multiple: true,
+        multiple: false,
         options: {
           clothes: 'Clothes',
           realestate: 'Real Estate'
@@ -63,7 +63,7 @@ $interface.bus.emit('gui', {
       producttype: {
         type: 'select',
         label: 'Product Type',
-        multiple: true,
+        multiple: false,
         options: {
           clothes: 'Clothes',
           furniture: 'Furniture',
