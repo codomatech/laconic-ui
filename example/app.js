@@ -8,7 +8,7 @@ $interface.bus.emit('gui', {
       supportedlocales: {
         type: 'select',
         label: 'Language',
-        multiple: true,
+        multiple: false,
         options: {
           en: 'English',
           fr: 'Francais',
