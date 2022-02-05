@@ -41,6 +41,8 @@
   <body>
     <div id="app">
       <v-app>
+
+
         <v-navigation-drawer fixed v-model="drawer" dark app>
           <app-list></app-list>
         </v-navigation-drawer>
@@ -53,9 +55,13 @@
         </v-app-bar>
 
         <v-spacer></v-spacer>
-        <v-main> <router-view></router-view></v-main>
+
+        <v-container fill-height justify="center" align="center" fluid>
+        <v-main><router-view></router-view></v-main>
+        </v-container>
 
         <app-footer></app-footer>
+
       </v-app>
     </div>
 
