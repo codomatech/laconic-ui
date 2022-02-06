@@ -1,4 +1,4 @@
-var $interface = (function () {
+var $laconic = (function () {
   'use strict';
 
   var Store = new Vue({
@@ -98,7 +98,6 @@ var $interface = (function () {
     let comp = await Vue.component(`app-${key}`, {
       template: `
             <div>
-                <v-flex xs12 sm6 d-flex>
                     <v-select
                      :items="items"
                      item-text="value"
@@ -108,7 +107,6 @@ var $interface = (function () {
                      v-model="selected"
                      chips
                      @change="sendToParent"></v-select>
-                </v-flex>
             </div>
         `,
       data () {
@@ -266,7 +264,7 @@ var $interface = (function () {
             <div>
                 <v-textarea
                 name="input-7-1"
-                filled label="Label"
+                filled label="${values.label}"
                 auto-grow
                 @change="sendToParent"
                 v-model="val"
@@ -366,11 +364,14 @@ var $interface = (function () {
 
   scomponents.AppHeader = Vue.component('app-header', {
     template: `
-        <v-layout id="AppHeader">
-            <v-avatar :size="header.size" v-if="header.imgSrc">
+        <v-layout id="AppHeader" flat align-center>
+
+            <h1 class="d-none d-lg-block text-md">{{ header.title }}</h1>
+
+            <v-spacer />
+            <v-avatar :size="header.size" v-if="header.imgSrc" class="d-none d-md-block">
                 <img :src="header.imgSrc" alt="Avatar">
             </v-avatar>
-            <v-toolbar-title v-if="header.title">{{ header.title }}</v-toolbar-title>
 
         </v-layout>
     `,
@@ -384,7 +385,9 @@ var $interface = (function () {
   scomponents.AppFooter = Vue.component('app-footer', {
     template: `
         <v-footer color="indigo" app inset>
-            <span class="white--text">{{footer.text}}</span>
+            <v-container fluid>
+              <p class="white--text text-sm-center">{{footer.text}}</p>
+            </v-container>
         </v-footer>
     `,
     computed: {
@@ -398,15 +401,21 @@ var $interface = (function () {
     template: `
         <div id="Applist">
             <!--<button v-for="doc in btnData" @click="navigateTo(doc.btnRoute)">{{doc.name}}</button>-->
-            <v-list dense v-for="doc in btnData" :key="doc.btnRoute">
-                <v-list-tile @click="navigateTo(doc.btnRoute)">
-                <v-list-tile-action>
-                    <v-icon>home</v-icon>
-                </v-list-tile-action>
-                <v-list-tile-content>
-                    <v-list-tile-title>{{ doc.name }}</v-list-tile-title>
-                </v-list-tile-content>
-                </v-list-tile>
+            <v-list dense nav>
+
+            <v-list-item link v-for="doc in btnData" :key="doc.btnRoute"
+                @click="navigateTo(doc.btnRoute)"
+                >
+                <v-list-item-tile>
+                <v-list-item-tile-action>
+                    <v-icon>{{ doc.icon || 'chevron_right' }}</v-icon>
+                </v-list-item-tile-action>
+                <v-list-item-tile-content>
+                    <v-list-item-tile-title>{{ doc.name }}</v-list-item-tile-title>
+                </v-list-item-tile-content>
+                </v-list-item-tile>
+            </v-list-item>
+
             </v-list>
         </div>
         `,
@@ -429,6 +438,10 @@ var $interface = (function () {
 
     methods: {
       navigateTo (route) {
+        console.log('navigateTo', route, 'current=', this.$router.currentRoute.path);
+        if (route === this.$router.currentRoute.path.substring(1)) {
+          return
+        }
         this.$router.push('/' + route);
         //nstScreen = Store.state.screens[route];
         renderscreen(route, Store.state.screens[route]);
