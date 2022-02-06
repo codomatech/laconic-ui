@@ -90,29 +90,7 @@ $laconic.bus.emit('gui', {
       weight: 0,
       tableview: {
         type: 'table',
-        // datasource: the name of data source of this table, after this table is defined
-        // you can set table contents using:
-        //   $laconic.bus.emit('gui',
-        //      {
-        //         op: 'updatedatasource', name: 'departmentstable',
-        //         display: [
-        //           ['Name', 'Family Name'],
-        //           ['Mohamed', 'Adel'],
-        //           ...
-        //         ],
-        //         raw: [
-        //           ['id', 'name', 'family_name'],
-        //           [1, 'mohamed', 'adel'],
-        //           ...
-        //         ]
-        //      }
-        //   )
-        //
-        // "value" is what should be displayed in the table, "rawdata" is the raw data of this row
-        // the operations below will use rawdata
         datasource: 'products-table',
-        // operations define the operations the user can do on each row
-        // each operation has a callback that expects a `row` argument which is take from rawdata
         operations: [
           { title: 'Edit',
             callback: function (row) {
