@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "laconic-ui": "^0.0.3"
+  },
+  "scripts": {
+    "build": "parcel build index.html",
+    "serve": "parcel serve index.html"
+  },
+  "devDependencies": {
+    "parcel": "^2.2.1"
+  },
+  "alias": {
+    "vue": "./node_modules/vue/dist/vue.common.js"
+  }
+}

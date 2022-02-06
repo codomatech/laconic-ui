@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>example app using laconic</title>
+    <!--<link rel="stylesheet" href="style/index.css" />-->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tingle/0.14.0/tingle.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tingle/0.14.0/tingle.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+
+
+        <v-navigation-drawer fixed v-model="drawer" dark app>
+          <app-list></app-list>
+        </v-navigation-drawer>
+
+        <v-app-bar color="indigo" dark app>
+          <v-app-bar-nav-icon @click.stop="drawer = !drawer">
+            <v-icon>menu</v-icon>
+          </v-app-bar-nav-icon>
+          <app-header></app-header>
+        </v-app-bar>
+
+        <v-spacer></v-spacer>
+
+        <v-container fill-height justify="center" align="center" fluid>
+        <v-main><router-view></router-view></v-main>
+        </v-container>
+
+        <app-footer></app-footer>
+
+      </v-app>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

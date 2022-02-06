@@ -1,6 +1,4 @@
-/* global $interface */
-
-$interface.bus.emit('gui', {
+$laconic.bus.emit('gui', {
   op: 'define',
   screens: {
     changesettings: {
@@ -27,7 +25,7 @@ $interface.bus.emit('gui', {
         console.log('submit handler')
         console.log(data)
 
-        $interface.bus.emit('gui', {
+        $laconic.bus.emit('gui', {
           op: 'notify',
           status: 'success',
           message: 'settings saved successfully'
@@ -51,7 +49,7 @@ $interface.bus.emit('gui', {
         console.log('submit handler')
         console.log(data)
 
-        $interface.bus.emit('gui', {
+        $laconic.bus.emit('gui', {
           op: 'notify',
           status: 'warn',
           message: 'product saved successfully'
@@ -75,7 +73,7 @@ $interface.bus.emit('gui', {
         console.log('submit handler')
         console.log(data)
 
-        $interface.bus.emit('gui', {
+        $laconic.bus.emit('gui', {
           op: 'notify',
           status: 'danger',
           message: 'product saved successfully'
@@ -89,7 +87,7 @@ $interface.bus.emit('gui', {
         type: 'table',
         // datasource: the name of data source of this table, after this table is defined
         // you can set table contents using:
-        //   $interface.bus.emit('gui',
+        //   $laconic.bus.emit('gui',
         //      {
         //         op: 'updatedatasource', name: 'departmentstable',
         //         display: [
@@ -121,7 +119,7 @@ $interface.bus.emit('gui', {
   } // screens
 })
 
-$interface.bus.emit('gui', {
+$laconic.bus.emit('gui', {
   op: 'set-branding',
   payload: {
     header: {
@@ -136,7 +134,7 @@ $interface.bus.emit('gui', {
   }
 })
 
-$interface.bus.emit('gui', {
+$laconic.bus.emit('gui', {
   op: 'update-datasource',
   payload: {
     name: 'products-table',
