@@ -621,7 +621,7 @@ function registerbusevents($interface) {
     });
 }
 
-var $interface$1 = {
+var $interface = {
     bus: new Eev(),
     state: {
       dsources: {
@@ -629,10 +629,10 @@ var $interface$1 = {
     }
 };
 
-registerbusevents($interface$1);
+registerbusevents($interface);
 
 // Start the app
-Vue.prototype.$interface = $interface$1;
+Vue.prototype.$interface = $interface;
 
 const vuetify = new Vuetify({
   icons: {
@@ -646,7 +646,7 @@ window.vuetify = vuetify;
 Vue.use(Vuetify);
 Vue.use(VueRouter);
 
-$interface$1.$app = new Vue({
+$interface.$app = new Vue({
   vuetify,
   el: '#app',
   router,
@@ -655,4 +655,4 @@ $interface$1.$app = new Vue({
   })
 }).$mount('#app');
 
-export { $interface$1 as default };
+export { $interface as default };
