@@ -1,3 +1,8 @@
+import Eev from 'eev';
+import Vue from 'vue';
+import Vuetify from 'vuetify';
+import VueRouter from 'vue-router';
+
 var Store = new Vue({
   data () {
     return {
@@ -9,8 +14,6 @@ var Store = new Vue({
     }
   }
 });
-
-//export default compInNstScreen
 
 function renderscreen(name, screen) {
   if (Store.state.curscreen.name === name) return
@@ -72,8 +75,6 @@ function renderscreen(name, screen) {
 
 // patterns
 
-
-/* global router, Vue, compInNstScreen */
 
 let title = async (values, key) => {
   let comp = await Vue.component(`app-${key}`, {
@@ -403,14 +404,14 @@ scomponents.Applist = Vue.component('app-list', {
             <v-list-item link v-for="doc in btnData" :key="doc.btnRoute"
                 @click="navigateTo(doc.btnRoute)"
                 >
-                <v-list-item-tile>
-                <v-list-item-tile-action>
+                <!--<v-list-item-title>-->
+                <v-list-item-action>
                     <v-icon>{{ doc.icon || 'chevron_right' }}</v-icon>
-                </v-list-item-tile-action>
-                <v-list-item-tile-content>
-                    <v-list-item-tile-title>{{ doc.name }}</v-list-item-tile-title>
-                </v-list-item-tile-content>
-                </v-list-item-tile>
+                </v-list-item-action>
+                <v-list-item-content>
+                    <v-list-item-title>{{ doc.name }}</v-list-item-title>
+                </v-list-item-content>
+                <!--</v-list-item-ttile>-->
             </v-list-item>
 
             </v-list>
@@ -532,8 +533,6 @@ const dcomponents = new Vue({
   }
 });
 
-/* global AppHome, VueRouter, components */
-
 const routes = [{ path: '/', component: scomponents.AppHome }];
 
 const router = new VueRouter({
@@ -622,8 +621,6 @@ function registerbusevents($interface) {
     });
 }
 
-/* global Eev, Vue, Vuetify */
-
 var $interface$1 = {
     bus: new Eev(),
     state: {
@@ -637,14 +634,17 @@ registerbusevents($interface$1);
 // Start the app
 Vue.prototype.$interface = $interface$1;
 
-Vue.use(Vuetify);
-
 const vuetify = new Vuetify({
   icons: {
     iconfont: 'mdi',
   },
 });
 
+
+window.vuetify = vuetify;
+
+Vue.use(Vuetify);
+Vue.use(VueRouter);
 
 $interface$1.$app = new Vue({
   vuetify,

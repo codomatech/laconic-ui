@@ -1,6 +1,5 @@
 {
   "name": "laconic-ui",
-  "version": "0.0.1",
   "description": "Low-code UI library to create apps's interface *fast*.",
   "main": "lib/interface.js",
   "unpkg": "interface.min.js",
@@ -10,8 +9,8 @@
     "dist/*.js"
   ],
   "scripts": {
-    "build-npm": "rollup lib/interface.js --format es --name '$laconic' --file output/npm/dist/laconic-ui.js",
-    "build-browser": "rollup lib/interface.js --format iife --name '$laconic' --file output/npm/dist/laconic-ui.browser.js"
+    "build-npm": "rollup lib/interface.js --format es -e Vue,Vuetify,Eev --name '$laconic' --file output/npm/dist/laconic-ui.js",
+    "build-browser": "rollup lib/interface.js --format iife -e Vue,Vuetify,Eev --name '$laconic' --file output/npm/dist/laconic-ui.browser.js"
   },
   "devDependencies": {
     "rollup": "^2.67.0"
