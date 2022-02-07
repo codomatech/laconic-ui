@@ -37,33 +37,10 @@
     <script src="https://cdn.jsdelivr.net/npm/eev@0.1.5/eev.min.js"></script>
   </head>
   <body>
-    <div id="app">
-      <v-app>
+    <div id="app"></div>
 
-
-        <v-navigation-drawer fixed v-model="drawer" dark app>
-          <app-list></app-list>
-        </v-navigation-drawer>
-
-        <v-app-bar color="indigo" dark app>
-          <v-app-bar-nav-icon @click.stop="drawer = !drawer">
-            <v-icon>menu</v-icon>
-          </v-app-bar-nav-icon>
-          <app-header></app-header>
-        </v-app-bar>
-
-        <v-spacer></v-spacer>
-
-        <v-container fill-height justify="center" align="center" fluid>
-        <v-main><router-view></router-view></v-main>
-        </v-container>
-
-        <app-footer></app-footer>
-
-      </v-app>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/laconic-ui@0.0.3/dist/laconic-ui.browser.js"></script>
+<!--    <script src="https://cdn.jsdelivr.net/npm/laconic-ui@0.0.3/dist/laconic-ui.browser.js"></script>-->
+    <script src="laconic-ui.browser.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

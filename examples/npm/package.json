@@ -11,6 +11,10 @@
     "parcel": "^2.2.1"
   },
   "alias": {
-    "vue": "./node_modules/vue/dist/vue.common.js"
+    "vue": "./node_modules/vue/dist/vue.common.js",
+    "vue-router": "./node_modules/vue-router/dist/vue-router.esm.js",
+    "vuetify": "./node_modules/vuetify/dist/vuetify.js",
+    "eev": "./node_modules/eev/eev.min.js"
+
   }
 }
