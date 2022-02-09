@@ -3,37 +3,37 @@ import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VueRouter from 'vue-router';
 
-var Store = new Vue({
+const Store = new Vue({
   data () {
     return {
       state: {
         staticComponents: {},
         screens: {},
-        curscreen: {name: null, components: []}
+        curscreen: { name: null, components: [] }
       }
     }
   }
 });
 
-function renderscreen(name, screen) {
+function renderscreen (name, screen) {
   if (Store.state.curscreen.name === name) return
 
   Store.state.curscreen.name = name;
   Store.state.curscreen.components = [];
   Object.keys(screen).map(async key => {
-    let component = screen[key];
+    const component = screen[key];
     if (!component || !component.type) {
-        return
+      return
     }
     if (key === 'title') {
-      let t = title(component, key);
+      const t = title(component, key);
       Store.state.curscreen.components.push(t);
       return
     }
     if ('submithandler weight'.indexOf(key) !== -1) {
       return
     }
-    //console.log(key, component.type)
+    // console.log(key, component.type)
     switch (component.type) {
       case 'select':
         await select(component, key);
@@ -47,13 +47,13 @@ function renderscreen(name, screen) {
         await inpNumper(component, key);
         break
 
-      case "email":
+      case 'email':
         await inpEmail(component, key);
-        break;
+        break
 
-      case "password":
+      case 'password':
         await inpPassword(component, key);
-        break;
+        break
 
       case 'textarea':
         await textarea(component, key);
@@ -75,25 +75,24 @@ function renderscreen(name, screen) {
 
 // patterns
 
-
-let title = async (values, key) => {
-  let comp = await Vue.component(`app-${key}`, {
+const title = async (values, key) => {
+  const comp = await Vue.component(`app-${key}`, {
     template: `<h1>${values}</h1>`
   });
   Store.state.curscreen.components.push(comp);
 };
 
-let select = async (values, key) => {
+const select = async (values, key) => {
   console.debug('select: ', key);
-  let optionsArr = [];
-  Object.keys(values.options).map(key => {
-    let obj = {
+  const optionsArr = [];
+  for (const key of Object.keys(values.options)) {
+    const obj = {
       key: key,
       value: values.options[key]
     };
     optionsArr.push(obj);
-  });
-  let comp = await Vue.component(`app-${key}`, {
+  }
+  const comp = await Vue.component(`app-${key}`, {
     template: `
             <div>
                     <v-select
@@ -116,7 +115,7 @@ let select = async (values, key) => {
     },
     methods: {
       sendToParent () {
-        let obj = {};
+        const obj = {};
         obj[key] = this.selected;
         this.$emit('sendToParent', obj);
       }
@@ -125,8 +124,8 @@ let select = async (values, key) => {
   Store.state.curscreen.components.push(comp);
 };
 
-let inpText = async (values, key) => {
-  let comp = await Vue.component(`app-${key}`, {
+const inpText = async (values, key) => {
+  const comp = await Vue.component(`app-${key}`, {
     template: `
             <div class="component input ${key}">
                 <v-text-field
@@ -144,7 +143,7 @@ let inpText = async (values, key) => {
     },
     methods: {
       sendToParent () {
-        let obj = {};
+        const obj = {};
         obj[key] = this.val;
         this.$emit('sendToParent', obj);
       }
@@ -153,8 +152,8 @@ let inpText = async (values, key) => {
   Store.state.curscreen.components.push(comp);
 };
 
-let inpEmail = async (values, key) => {
-  let comp = await Vue.component(`app-${key}`, {
+const inpEmail = async (values, key) => {
+  const comp = await Vue.component(`app-${key}`, {
     template: `
           <div>
               <v-text-field
@@ -166,7 +165,7 @@ let inpEmail = async (values, key) => {
               ></v-text-field>
           </div>
       `,
-    data() {
+    data () {
       return {
         val: null,
         rules: {
@@ -177,21 +176,21 @@ let inpEmail = async (values, key) => {
             return pattern.test(value) || 'Invalid e-mail.'
           }
         }
-      };
+      }
     },
     methods: {
-      sendToParent() {
-        let obj = {};
+      sendToParent () {
+        const obj = {};
         obj[key] = this.val;
-        this.$emit("sendToParent", obj);
+        this.$emit('sendToParent', obj);
       }
     }
   });
   Store.state.curscreen.components.push(comp);
 };
 
-let inpPassword = async (values, key) => {
-  let comp = await Vue.component(`app-${key}`, {
+const inpPassword = async (values, key) => {
+  const comp = await Vue.component(`app-${key}`, {
     template: `
           <div>
               <v-text-field
@@ -206,30 +205,30 @@ let inpPassword = async (values, key) => {
               ></v-text-field>
           </div>
       `,
-    data() {
+    data () {
       return {
         val: null,
         show: false,
         rules: {
-          required: value => !!value || "Required.",
-          min: v => (v && v.length >= 8) || "Min 8 characters",
+          required: value => !!value || 'Required.',
+          min: v => (v && v.length >= 8) || 'Min 8 characters',
           emailMatch: () => "The email and password you entered don't match"
         }
-      };
+      }
     },
     methods: {
-      sendToParent() {
-        let obj = {};
+      sendToParent () {
+        const obj = {};
         obj[key] = this.val;
-        this.$emit("sendToParent", obj);
+        this.$emit('sendToParent', obj);
       }
     }
   });
   Store.state.curscreen.components.push(comp);
 };
 
-let inpNumper = async (values, key) => {
-  let comp = await Vue.component(`app-${key}`, {
+const inpNumper = async (values, key) => {
+  const comp = await Vue.component(`app-${key}`, {
     template: `
             <div>
                 <v-text-field
@@ -246,8 +245,8 @@ let inpNumper = async (values, key) => {
       }
     },
     methods: {
-      sendToParent (label) {
-        let obj = {};
+      sendToParent () {
+        const obj = {};
         obj[key] = this.val;
         this.$emit('sendToParent', obj);
       }
@@ -256,8 +255,8 @@ let inpNumper = async (values, key) => {
   Store.state.curscreen.components.push(comp);
 };
 
-let textarea = async (values, key) => {
-  let comp = await Vue.component(`app-${key}`, {
+const textarea = async (values, key) => {
+  const comp = await Vue.component(`app-${key}`, {
     template: `
             <div>
                 <v-textarea
@@ -275,8 +274,8 @@ let textarea = async (values, key) => {
       }
     },
     methods: {
-      sendToParent (label) {
-        let obj = {};
+      sendToParent () {
+        const obj = {};
         obj[key] = this.val;
         this.$emit('sendToParent', obj);
       }
@@ -285,8 +284,8 @@ let textarea = async (values, key) => {
   Store.state.curscreen.components.push(comp);
 };
 
-let submitBtn = async (values, key) => {
-  let comp = await Vue.component(`app-${key}`, {
+const submitBtn = async (values, key) => {
+  const comp = await Vue.component(`app-${key}`, {
     template: `
             <div>
                 <v-btn color="indigo lighten-2" dark @click="submit">${
@@ -306,16 +305,16 @@ let submitBtn = async (values, key) => {
 const table = async (values, key) => {
   $interface.state.dsources[values.datasource] =
     $interface.state.dsources[values.datasource] || { display: [], raw: [] };
-  let rowcursor = values.operations ? 'pointer' : 'auto';
-  let comp = await Vue.component(`app-${key}`, {
+  const rowcursor = values.operations ? 'pointer' : 'auto';
+  const comp = await Vue.component(`app-${key}`, {
     data: function () {
       return {
-        tabledata: $interface.state.dsources[values.datasource]
+        dsource: $interface.state.dsources[values.datasource]
       }
     },
     methods: {
       showeditdialog: function (index) {
-        let tabledata = this.$data.tabledata;
+        const tabledata = this.$data.tabledata;
         if (!values.operations) return
         $interface.bus.emit('gui', {
           op: 'dialog',
@@ -326,6 +325,16 @@ const table = async (values, key) => {
       }
     },
     template: `
+
+    <v-data-table
+        :headers="dsource.display.header"
+        :items="dsource.display.rows"
+        :items-per-page="5"
+        class="elevation-1"
+        ></v-data-table>
+
+
+    <!--
     <table>
         <thead>
         <tr>
@@ -345,6 +354,7 @@ const table = async (values, key) => {
         </tr>
         </tbody>
     </table>
+    -->
     `
   });
   Store.state.curscreen.components.push(comp);
@@ -375,7 +385,7 @@ scomponents.AppHeader = Vue.component('app-header', {
     `,
   computed: {
     header () {
-      return Store.state.staticComponents.header? Store.state.staticComponents.header: {}
+      return Store.state.staticComponents.header ? Store.state.staticComponents.header : {}
     }
   }
 });
@@ -390,7 +400,7 @@ scomponents.AppFooter = Vue.component('app-footer', {
     `,
   computed: {
     footer () {
-      return Store.state.staticComponents.footer? Store.state.staticComponents.footer: {}
+      return Store.state.staticComponents.footer ? Store.state.staticComponents.footer : {}
     }
   }
 });
@@ -425,13 +435,15 @@ scomponents.Applist = Vue.component('app-list', {
   },
 
   computed: {
-      btnData:  function() { return Object.keys(Store.state.screens).map(key => {
-        let obj = {
+    btnData: function () {
+      return Object.keys(Store.state.screens).map(key => {
+        const obj = {
           name: Store.state.screens[key].title,
           btnRoute: key
         };
         return obj
-      })}
+      })
+    }
   },
 
   methods: {
@@ -441,33 +453,27 @@ scomponents.Applist = Vue.component('app-list', {
         return
       }
       this.$router.push('/' + route);
-      //nstScreen = Store.state.screens[route];
+      // nstScreen = Store.state.screens[route];
       renderscreen(route, Store.state.screens[route]);
-    },
-
-    getRoutes () {
-      Object.keys(Store.state.screens).map(key => {
-        let obj = {
-          name: Store.state.screens[key].title,
-          btnRoute: key
-        };
-
-        this.btnData.push(obj);
-      });
     }
-  },
-  mounted () {
-    //this.getRoutes()
   }
 });
 
+const routes = [{ path: '/', component: scomponents.AppHome }];
+
+const router = new VueRouter({
+  routes: routes
+});
+
 const dcomponents = new Vue({
-  data: function() {return {
-    curscreen: Store.state.curscreen.components
-  }},
+  data: function () {
+    return {
+      curscreen: Store.state.curscreen.components
+    }
+  },
   computed: {
     list: () => Object.keys(Store.state.screens).map(ID => {
-      let obj = {
+      const obj = {
         path: '/' + ID,
         component: Vue.component(`app-${ID}`, {
           template: `
@@ -495,29 +501,27 @@ const dcomponents = new Vue({
           },
           methods: {
             async saveData (d) {
-              if (this.PageData.length == 0) {
+              if (!this.PageData.length) {
                 this.PageData.push(d);
                 return
               }
 
-              let filterdArr = await this.PageData.filter(
-                doc => Object.keys(doc) != Object.keys(d)[0]
+              const filterdArr = await this.PageData.filter(
+                doc => Object.keys(doc) !== Object.keys(d)[0]
               );
               this.PageData = filterdArr;
               this.PageData.push(d);
             },
 
             submitForm (d) {
-              let resultObject = this.PageData.reduce((result, currentObject) => {
-                for (let key in currentObject) {
-                  if (currentObject.hasOwnProperty(key)) {
-                    result[key] = currentObject[key];
-                  }
+              const resultObject = this.PageData.reduce((result, currentObject) => {
+                for (const key of Object.keys(currentObject)) {
+                  result[key] = currentObject[key];
                 }
                 return result
               }, {});
               this.finalObj = resultObject;
-              let obj = {
+              const obj = {
                 screen: this.screen,
                 type: d.type,
                 payload: this.finalObj
@@ -533,100 +537,94 @@ const dcomponents = new Vue({
   }
 });
 
-const routes = [{ path: '/', component: scomponents.AppHome }];
+function registerbusevents ($interface) {
+  $interface.bus.on('interaction', data => {
+    // console.debug('interaction took place:', data)
+    console.log('interaction took place:');
+    console.log(data);
+  });
 
-const router = new VueRouter({
-  routes: routes
-});
-
-function registerbusevents($interface) {
-    $interface.bus.on('interaction', data => {
-      // console.debug('interaction took place:', data)
-      console.log('interaction took place:');
-      console.log(data);
-    });
-
-    // handle all [gui] events..
-    $interface.bus.on('gui', data => {
-      switch (data.op) {
-        // handle Screens events
-        case 'define':
-          Store.state.screens = data.screens;
-          Store.state.curscreen.name = null;
-          console.debug('adding routes to router', dcomponents.list);
-          $interface.$app.$router.addRoutes(dcomponents.list);
-          
-          break
+  // handle all [gui] events..
+  $interface.bus.on('gui', data => {
+    switch (data.op) {
+      // handle Screens events
+      case 'define':
+        Store.state.screens = data.screens;
+        Store.state.curscreen.name = null;
+        for (const route of dcomponents.list) {
+          $interface.$app.$router.addRoute(route);
+        }
+        break
 
         // handle notification events
-        case 'notify':
-          let bg = '';
-          switch (data.status) {
-            case 'success':
-              bg = 'linear-gradient(to right, #555, #2ea879)';
-              break
-            case 'warn':
-              bg = 'linear-gradient(to right, #ffa63e, #ffaa0f)';
-              break
-            case 'danger':
-              bg = 'linear-gradient(to right, #555, #ff0000)';
-              break
-            default:
-              bg = 'linear-gradient(to right, #555, #96c93d)';
-          }
+      case 'notify': {
+        let icon = '';
+        switch (data.status) {
+          case 'success':
+            icon = 'check';
+            break
+          case 'warn':
+            icon = 'warning';
+            break
+          case 'danger':
+            icon = 'error';
+            break
+        }
+        const notification = $interface.state.notification;
+        notification.active = false;
+        notification.text = data.message;
+        notification.icon = icon;
+        notification.active = true;
 
-          let NObj = {
-            text: data.message,
-            backgroundColor: bg
-          };
-          Toastify(NObj).showToast();
-          break
-
-        // handle dialog events
-        case 'dialog':
-
-          let modal = new tingle.modal({
-            footer: !!data.actions,
-            stickyFooter: true
-          });
-          data.content && modal.setContent(data.content);
-
-          data.actions && data.actions.forEach(function (action) {
-            modal.addFooterBtn(action.title, 'tingle-btn', function () {
-              typeof (action.callback) === 'function' && action.callback.apply(null, data.args || []);
-              modal.close();
-            });
-          });
-
-          modal.open();
-          break
-
-        // handle static components events
-        case 'set-branding':
-          Store.state.staticComponents = data.payload;
-          break
+        break
+      }
+      // handle static components events
+      case 'set-branding':
+        Store.state.staticComponents = data.payload;
+        break
 
         // update datasource
-        case 'update-datasource':
-          let payload = data.payload;
-          if (!$interface.state.dsources[payload.name]) {
-            // console.debug('datasource not ready yet, will retry shortly', payload.name)
-            setTimeout(function () { $interface.bus.emit('gui', data); }, 500);
-            break
-          }
-          $interface.state.dsources[payload.name].display = payload.display;
-          $interface.state.dsources[payload.name].raw = payload.raw;
+      case 'update-datasource': {
+        const payload = data.payload;
+        if (!$interface.state.dsources[payload.name]) {
+          // console.debug('datasource not ready yet, will retry shortly', payload.name)
+          setTimeout(function () { $interface.bus.emit('gui', data); }, 500);
           break
-      }
-    });
-}
+        }
 
-var $interface = {
-    bus: new Eev(),
-    state: {
-      dsources: {
+        let display;
+        const dsource = payload.display;
+        if (!dsource || !dsource.length) {
+          display = { header: [], rows: [] };
+        } else {
+          const header = dsource[0].map(n => ({ text: n, value: n, sortable: true }));
+          console.debug(dsource[0], header);
+          const rows = dsource.slice(1).map((record) => {
+            const row = {};
+            let i = 0;
+            for (const field of header) {
+              row[field.value] = record[i++];
+            }
+            return row
+          });
+          display = { header, rows };
+        }
+
+        $interface.state.dsources[payload.name].display = display;
+        $interface.state.dsources[payload.name].raw = payload.raw;
+        break
       }
     }
+  });
+}
+
+const $interface = {
+  bus: new Eev(),
+  state: {
+    dsources: {
+    },
+    notification: { active: false, text: '' }
+  }
 };
 
 registerbusevents($interface);
@@ -636,23 +634,65 @@ Vue.prototype.$interface = $interface;
 
 const vuetify = new Vuetify({
   icons: {
-    iconfont: 'mdi',
-  },
+    iconfont: 'mdi'
+  }
 });
-
 
 window.vuetify = vuetify;
 
 Vue.use(Vuetify);
 Vue.use(VueRouter);
 
+const mainComponent = Vue.component('laconic-main', {
+  data: () => ({ drawer: null, notification: $interface.state.notification }),
+  template: `
+      <v-app>
+        <v-navigation-drawer fixed v-model="drawer" dark app>
+          <app-list></app-list>
+        </v-navigation-drawer>
+
+        <v-app-bar color="indigo" dark app>
+          <v-app-bar-nav-icon @click.stop="drawer = !drawer">
+            <v-icon>menu</v-icon>
+          </v-app-bar-nav-icon>
+          <app-header></app-header>
+        </v-app-bar>
+
+        <v-spacer></v-spacer>
+
+        <v-container fill-height justify="center" align="center" fluid>
+        <v-main><router-view></router-view></v-main>
+        </v-container>
+
+        <app-footer></app-footer>
+
+
+        <v-snackbar
+            v-model="notification.active"
+        >
+        <v-icon>{{ notification.icon || 'notifications' }}</v-icon>
+        {{ notification.text }}
+            <template v-slot:action="{ attrs }">
+            <v-btn
+                color="pink"
+                text
+                v-bind="attrs"
+                @click="notification.active = false"
+                >
+                Close
+            </v-btn>
+            </template>
+        </v-snackbar>
+
+      </v-app>
+  `
+});
+
 $interface.$app = new Vue({
   vuetify,
   el: '#app',
   router,
-  data: () => ({
-    drawer: null
-  })
+  render: h => h(mainComponent)
 }).$mount('#app');
 
 export { $interface as default };
