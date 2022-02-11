@@ -1,4 +1,3 @@
-import Vuetify from 'vuetify'
 import $laconic from 'laconic-ui'
 
 window.$laconic = $laconic
@@ -24,7 +23,7 @@ $laconic.bus.emit('gui', {
       },
       storename: { type: 'input', label: 'Store Name' },
       storeabout: { type: 'textarea', label: 'About the Store' },
-      password: { type: 'password', label: 'Password'},
+      password: { type: 'password', label: 'Password' },
       email: { type: 'email', label: 'Email' },
       submitSettings: { type: 'submit', label: 'submit' },
       submithandler: data => {
@@ -36,7 +35,6 @@ $laconic.bus.emit('gui', {
           status: 'success',
           message: 'settings saved successfully'
         })
-
       }
     },
     addproduct: {
@@ -66,7 +64,6 @@ $laconic.bus.emit('gui', {
           op: 'goto-screen',
           screen: 'viewproducts'
         })
-
       }
     },
     editproduct: {
@@ -105,12 +102,15 @@ $laconic.bus.emit('gui', {
         type: 'table',
         datasource: 'products-table',
         operations: [
-          { title: 'Edit',
+          {
+            title: 'Edit',
             callback: function (row) {
               console.debug('editing department', row)
               return false
-            } }
-        ] }
+            }
+          }
+        ]
+      }
     }
   } // screens
 })
