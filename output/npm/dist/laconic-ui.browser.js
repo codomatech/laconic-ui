@@ -293,7 +293,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
     const comp = await Vue__default["default"].component(`app-${key}`, {
       template: `
             <div>
-                <v-btn color="indigo lighten-2" dark @click="submit">${
+                <v-btn @click="submit">${
   values.label
 }</v-btn>
             </div>
@@ -397,9 +397,9 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
 
   scomponents.AppFooter = Vue__default["default"].component('app-footer', {
     template: `
-        <v-footer color="indigo" app inset>
+        <v-footer app inset>
             <v-container fluid>
-              <p class="white--text text-sm-center">{{footer.text}}</p>
+              <p class="text-sm-center">{{footer.text}}</p>
             </v-container>
         </v-footer>
     `,
@@ -550,18 +550,35 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
     });
 
     // handle all [gui] events..
+    $interface.bus.off('gui');
     $interface.bus.on('gui', data => {
       switch (data.op) {
-        // handle Screens events
-        case 'define':
+        case 'define': {
           Store.state.screens = data.screens;
           Store.state.curscreen.name = null;
+          const $router = $interface.$app.$router;
           for (const route of dcomponents.list) {
-            $interface.$app.$router.addRoute(route);
+            $router.addRoute(route);
           }
+          let home = $router.currentRoute && $router.currentRoute.path;
+          if (!home || home === '/') { home = data.home; } else { home = home.slice(1); }
+          if (home) { $interface.bus.emit('gui', { op: 'goto-screen', screen: home }); }
           break
+        }
 
-          // handle notification events
+        case 'goto-screen': {
+          const screen = Store.state.screens[data.screen];
+          if (!screen) {
+            console.error('invalid screen name', data.screen);
+            break
+          }
+          const $router = $interface.$app.$router;
+          renderscreen(data.screen, screen);
+
+          if ($router.currentRoute.path !== '/' + data.screen) { $router.push(data.screen); }
+          break
+        }
+
         case 'notify': {
           let icon = '';
           switch (data.status) {
@@ -643,8 +660,6 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
     }
   });
 
-  window.vuetify = vuetify;
-
   Vue__default["default"].use(Vuetify__default["default"]);
   Vue__default["default"].use(VueRouter__default["default"]);
 
@@ -652,11 +667,11 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
     data: () => ({ drawer: null, notification: $interface.state.notification }),
     template: `
       <v-app>
-        <v-navigation-drawer fixed v-model="drawer" dark app>
+        <v-navigation-drawer fixed v-model="drawer" app>
           <app-list></app-list>
         </v-navigation-drawer>
 
-        <v-app-bar color="indigo" dark app>
+        <v-app-bar app>
           <v-app-bar-nav-icon @click.stop="drawer = !drawer">
             <v-icon>menu</v-icon>
           </v-app-bar-nav-icon>
@@ -679,7 +694,6 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
         {{ notification.text }}
             <template v-slot:action="{ attrs }">
             <v-btn
-                color="pink"
                 text
                 v-bind="attrs"
                 @click="notification.active = false"
