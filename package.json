@@ -9,6 +9,7 @@
     "dist/*.js"
   ],
   "scripts": {
+    "lint": "eslint lib/**/*.js",
     "build-npm": "rollup lib/interface.js --format es -e Vue,Vuetify,Eev --name '$laconic' --file output/npm/dist/laconic-ui.js",
     "build-browser": "rollup lib/interface.js --format iife -e Vue,Vuetify,Eev --name '$laconic' --file output/npm/dist/laconic-ui.browser.js"
   },
