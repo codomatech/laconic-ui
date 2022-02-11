@@ -5,6 +5,7 @@ window.$laconic = $laconic
 
 $laconic.bus.emit('gui', {
   op: 'define',
+  home: 'changesettings',
   screens: {
     changesettings: {
       title: 'Change Settings',
@@ -35,6 +36,7 @@ $laconic.bus.emit('gui', {
           status: 'success',
           message: 'settings saved successfully'
         })
+
       }
     },
     addproduct: {
@@ -59,6 +61,12 @@ $laconic.bus.emit('gui', {
           status: 'warn',
           message: 'product saved successfully'
         })
+
+        $laconic.bus.emit('gui', {
+          op: 'goto-screen',
+          screen: 'viewproducts'
+        })
+
       }
     },
     editproduct: {
@@ -82,6 +90,11 @@ $laconic.bus.emit('gui', {
           op: 'notify',
           status: 'danger',
           message: 'product saved successfully'
+        })
+
+        $laconic.bus.emit('gui', {
+          op: 'goto-screen',
+          screen: 'viewproducts'
         })
       }
     },
