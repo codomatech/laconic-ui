@@ -1,9 +1,9 @@
 # `laconic`: frontend framework for busy developers
 
 `laconic` is a low-code UI framework to create apps's interface fast.
-Top features:
+**Top features:**
 **declarative definition** of your UI with **minimal boilerplate** and **best-of-breed tech** fully hidden under the hood.
-Check out our [demo](https://codomatech.github.io/laconic-ui/examples/browser/).
+Check out our [demo](https://codomatech.github.io/laconic-ui/examples/browser/) and/or experiment with it live [here](https://codepen.io/codomatech/pen/LYOjdRb).
 
 **The framework is still evolving**. please help us grow it to a stable release
 with your feature requests and bug reports. Please use the [issues](issues) for
