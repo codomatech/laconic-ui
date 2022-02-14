@@ -2302,10 +2302,10 @@ json5@^2.1.2, json5@^2.2.0:
   dependencies:
     minimist "^1.2.5"
 
-laconic-ui@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/laconic-ui/-/laconic-ui-0.0.3.tgz#f5b9e3f428f39ad522f753ec10684b0da5c45c9b"
-  integrity sha512-DgeUzK8DYE87gefKnDSrDiWzqOl23G6t0V/t9qxdZcxQc8nbD1zKRr6i4aZKlVOArRMLF8debkheu3+Qre87/g==
+laconic-ui@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/laconic-ui/-/laconic-ui-0.0.5.tgz#16df4e2a6ca30b119fc89509eefce0ac2d6f379d"
+  integrity sha512-kDY/sJI33AzpBFGIGngRkbNn7AP4x+3+e08kW6FtZTwWcT3+PAtMuu286Lsl536nh2OfxXShx4VyGF1uOeNMPg==
   dependencies:
     eev "^0.1.5"
     vue "^2.6.14"
