@@ -30,12 +30,11 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
     Store.state.curscreen.components = [];
     Object.keys(screen).map(async key => {
       const component = screen[key];
-      if (!component || !component.type) {
+      if (key === 'title') {
+        await title(component, key);
         return
       }
-      if (key === 'title') {
-        const t = title(component, key);
-        Store.state.curscreen.components.push(t);
+      if (!component || !component.type) {
         return
       }
       if ('submithandler weight'.indexOf(key) !== -1) {
@@ -83,9 +82,9 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
 
   // patterns
 
-  const title = async (values, key) => {
+  const title = async (text, key) => {
     const comp = await Vue__default["default"].component(`app-${key}`, {
-      template: `<h1>${values}</h1>`
+      template: `<div class="screen-title text-h3">${text}</div>`
     });
     Store.state.curscreen.components.push(comp);
   };
