@@ -1,8 +1,8 @@
 {
   "name": "laconic-ui",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "type": "module",
-  "description": "Low-code UI library to create apps's interface *fast*.",
+  "description": "a frontend framework for busy developers.",
   "main": "dist/laconic-ui.js",
   "scripts": {
     "test": "echo \"No tests yet\""
