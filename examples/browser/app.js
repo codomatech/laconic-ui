@@ -31,8 +31,6 @@ $laconic.bus.emit('gui', {
       },
       storename: { type: 'input', label: 'Store Name' },
       storeabout: { type: 'textarea', label: 'About the Store' },
-      password: { type: 'password', label: 'Password' },
-      email: { type: 'email', label: 'Email' },
       submitSettings: { type: 'submit', label: 'submit' },
       submithandler: data => {
         console.log('submit handler')

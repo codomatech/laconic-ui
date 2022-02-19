@@ -4,7 +4,7 @@
     "laconic-ui": "^0.0.5"
   },
   "scripts": {
-    "build": "parcel build index.html",
+    "build": "parcel build --public-url './' index.html",
     "serve": "parcel serve index.html"
   },
   "devDependencies": {
