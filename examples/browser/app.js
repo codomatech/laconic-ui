@@ -1,8 +1,20 @@
 $laconic.bus.emit('gui', {
   op: 'define',
-  home: 'changesettings',
+  home: 'login',
   screens: {
+    login: {
+      isvisible: () => $laconic.state.loggedIn !== true,
+      title: 'Log in',
+      username: { type: 'input', label: 'Username' },
+      password: { type: 'password', label: 'Password' },
+      submitSettings: { type: 'submit', label: 'log in' },
+      submithandler: data => {
+          $laconic.state.loggedIn = true
+          $laconic.bus.emit('gui', {op: 'goto-screen', screen: 'changesettings'})
+      }
+    },
     changesettings: {
+      isvisible: () => $laconic.state.loggedIn === true,
       title: 'Change Settings',
       supportedlocales: {
         type: 'select',
@@ -34,6 +46,7 @@ $laconic.bus.emit('gui', {
       }
     },
     addproduct: {
+      isvisible: () => $laconic.state.loggedIn === true,
       title: 'Add new Product',
       producttype: {
         type: 'select',
@@ -63,6 +76,7 @@ $laconic.bus.emit('gui', {
       }
     },
     editproduct: {
+      isvisible: () => $laconic.state.loggedIn === true,
       title: 'Edit Product',
       producttype: {
         type: 'select',
@@ -92,6 +106,7 @@ $laconic.bus.emit('gui', {
       }
     },
     viewproducts: {
+      isvisible: () => $laconic.state.loggedIn === true,
       title: 'Products',
       weight: 0,
       tableview: {

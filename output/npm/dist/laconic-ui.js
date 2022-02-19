@@ -15,6 +15,9 @@ const Store = new Vue({
   }
 });
 
+console.debug('laconic store = ', Store);
+
+// TODO replace this with a component whose template depends on curscreen
 function renderscreen (name, screen) {
   if (Store.state.curscreen.name === name) return
 
@@ -83,7 +86,6 @@ const title = async (values, key) => {
 };
 
 const select = async (values, key) => {
-  console.debug('select: ', key);
   const optionsArr = [];
   for (const key of Object.keys(values.options)) {
     const obj = {
@@ -436,7 +438,11 @@ scomponents.Applist = Vue.component('app-list', {
 
   computed: {
     btnData: function () {
-      return Object.keys(Store.state.screens).map(key => {
+      return Object.keys(Store.state.screens).filter((key) => {
+        const screen = Store.state.screens[key];
+        // console.debug('static components: checking screen visibilty', key, screen)
+        return (!screen.isvisible || screen.isvisible() === true)
+      }).map(key => {
         const obj = {
           name: Store.state.screens[key].title,
           btnRoute: key
@@ -448,13 +454,14 @@ scomponents.Applist = Vue.component('app-list', {
 
   methods: {
     navigateTo (route) {
-      console.log('navigateTo', route, 'current=', this.$router.currentRoute.path);
+      Store.state.curscreen = Store.state.screens[route];
+      console.log('navigateTo', route, 'current=', this.$router.currentRoute.path, Store.state.curscreen);
       if (route === this.$router.currentRoute.path.substring(1)) {
         return
       }
       this.$router.push('/' + route);
       // nstScreen = Store.state.screens[route];
-      renderscreen(route, Store.state.screens[route]);
+      renderscreen(route, Store.state.curscreen);
     }
   }
 });
@@ -538,12 +545,6 @@ const dcomponents = new Vue({
 });
 
 function registerbusevents ($interface) {
-  $interface.bus.on('interaction', data => {
-    // console.debug('interaction took place:', data)
-    console.log('interaction took place:');
-    console.log(data);
-  });
-
   // handle all [gui] events..
   $interface.bus.off('gui');
   $interface.bus.on('gui', data => {
@@ -553,8 +554,9 @@ function registerbusevents ($interface) {
         Store.state.curscreen.name = null;
         const $router = $interface.$app.$router;
         for (const route of dcomponents.list) {
-          $router.addRoute(route);
+          if (route && route.path) $router.addRoute(route);
         }
+        Store.state.homeScreen = data.home;
         let home = $router.currentRoute && $router.currentRoute.path;
         if (!home || home === '/') { home = data.home; } else { home = home.slice(1); }
         if (home) { $interface.bus.emit('gui', { op: 'goto-screen', screen: home }); }
@@ -562,13 +564,27 @@ function registerbusevents ($interface) {
       }
 
       case 'goto-screen': {
-        const screen = Store.state.screens[data.screen];
+        const $router = $interface.$app.$router;
+        let target = data.screen;
+        if (target === '@') { target = $router.currentRoute.path.slice(1); }
+        let screen = Store.state.screens[target];
         if (!screen) {
           console.error('invalid screen name', data.screen);
           break
         }
-        const $router = $interface.$app.$router;
-        renderscreen(data.screen, screen);
+        if (screen.isvisible && screen.isvisible() !== true) {
+          target = Store.state.homeScreen;
+          screen = Store.state.screens[target];
+          if (!target || (screen.isvisible && screen.isvisible() !== true)) {
+            target = '/';
+          } else {
+            renderscreen(target, screen);
+          }
+          console.debug('trying to navigate to invisible screen, aborting', target, Store.state.homeScreen);
+          $router.push(target);
+          break
+        }
+        renderscreen(target, screen);
 
         if ($router.currentRoute.path !== '/' + data.screen) { $router.push(data.screen); }
         break
@@ -615,7 +631,7 @@ function registerbusevents ($interface) {
           display = { header: [], rows: [] };
         } else {
           const header = dsource[0].map(n => ({ text: n, value: n, sortable: true }));
-          console.debug(dsource[0], header);
+          // console.debug(dsource[0], header)
           const rows = dsource.slice(1).map((record) => {
             const row = {};
             let i = 0;
@@ -635,13 +651,30 @@ function registerbusevents ($interface) {
   });
 }
 
+// TODO make part of the state observable, on update increment
+// key to force reload the whole app: https://stackoverflow.com/questions/32106155/can-you-force-vue-js-to-reload-re-render
+const initialState = {
+  dsources: {
+  },
+  notification: { active: false, text: '' }
+};
+
+const state = new Proxy(initialState, {
+  set: (obj, prop, value) => {
+    $interface.$app.$children[0].version++;
+    console.debug('updating ui version to', $interface.$app.$children[0].version);
+    obj[prop] = value;
+
+    // current screen might be no longer visible, refresh
+    $interface.bus.emit('gui', { op: 'goto-screen', screen: '@' });
+
+    return true
+  }
+});
+
 const $interface = {
   bus: new Eev(),
-  state: {
-    dsources: {
-    },
-    notification: { active: false, text: '' }
-  }
+  state: state
 };
 
 registerbusevents($interface);
@@ -660,8 +693,9 @@ Vue.use(VueRouter);
 
 const mainComponent = Vue.component('laconic-main', {
   data: () => ({ drawer: null, notification: $interface.state.notification }),
+  props: ['version'],
   template: `
-      <v-app>
+      <v-app :key="version">
         <v-navigation-drawer fixed v-model="drawer" app>
           <app-list></app-list>
         </v-navigation-drawer>
@@ -708,5 +742,7 @@ $interface.$app = new Vue({
   router,
   render: h => h(mainComponent)
 }).$mount('#app');
+
+$interface.$app.$children[0].version = 0;
 
 export { $interface as default };
