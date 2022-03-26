@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "eev": "^0.1.5",
-    "laconic-ui": "^0.0.5"
+    "laconic-ui": "^0.0.5",
+    "minimist": "^1.2.6"
   },
   "scripts": {
     "build": "parcel build --public-url './' index.html",
