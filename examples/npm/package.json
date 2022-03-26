@@ -15,6 +15,5 @@
     "vue-router": "./node_modules/vue-router/dist/vue-router.esm.js",
     "vuetify": "./node_modules/vuetify/dist/vuetify.js",
     "eev": "./node_modules/eev/eev.min.js"
-
   }
 }
