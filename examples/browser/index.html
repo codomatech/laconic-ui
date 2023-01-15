@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html language="en">
   <head>
     <meta charset="utf-8" />
     <title>example app using laconic</title>
@@ -27,9 +27,23 @@
     <script src="https://cdn.jsdelivr.net/npm/eev@0.1.5/eev.min.js"></script>
   </head>
   <body>
+
+    <style>
+    .lc-table {
+      width: 100%;
+      padding: 1em;
+      margin: 1em;
+    }
+    .lc-table thead tr { background: #eee; text-align: center; font-weight: bold;}
+    .lc-table td { padding: 10px; }
+    .lc-table tr.clickable {cursor: pointer;}
+    .lc-table tr.clickable:hover {background: #eef;}
+    </style>
+
     <div id="app"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/laconic-ui@0.0.8/dist/laconic-ui.browser.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/laconic-ui@0.0.8/dist/laconic-ui.browser.js"></script>-->
+    <script src="laconic-ui.browser.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
