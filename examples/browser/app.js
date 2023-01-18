@@ -1,20 +1,20 @@
-$laconic.ui.define({
+$lc.ui.define({
   home: 'login',
   screens: {
     login: {
-      isvisible: () => $laconic.state.loggedIn !== true,
+      isvisible: () => $lc.state.loggedIn !== true,
       title: 'Log in',
       username: { type: 'input', label: 'Username' },
       password: { type: 'password', label: 'Password' },
       submitSettings: { type: 'submit', label: 'log in' },
       submithandler: data => {
-        $laconic.state.loggedIn = true
-        $laconic.ui.gotoScreen({ screen: 'changesettings' })
+        $lc.state.loggedIn = true
+        $lc.ui.gotoScreen({ screen: 'changesettings' })
       }
     },
     changesettings: {
       weight: 1,
-      isvisible: () => $laconic.state.loggedIn === true,
+      isvisible: () => $lc.state.loggedIn === true,
       title: 'Change Settings',
       supportedlocales: {
         type: 'select',
@@ -36,7 +36,7 @@ $laconic.ui.define({
         console.log('submit handler')
         console.log(data)
 
-        $laconic.ui.notify({
+        $lc.ui.notify({
           status: 'success',
           message: 'settings saved successfully'
         })
@@ -44,7 +44,7 @@ $laconic.ui.define({
     },
     addproduct: {
       isnavigable: false,
-      isvisible: () => $laconic.state.loggedIn === true,
+      isvisible: () => $lc.state.loggedIn === true,
       title: 'Add new Product',
       productName: {
         type: 'input',
@@ -63,28 +63,28 @@ $laconic.ui.define({
         const [success, msg] = MockDataService.createRecord({ sku: data.sku, price: data.price, name: data.productName })
 
         if (!success) {
-          $laconic.ui.notify({
+          $lc.ui.notify({
             status: 'error',
             message: `Error: ${msg}`
           })
         } else {
-          $laconic.ui.notify({
+          $lc.ui.notify({
             status: 'success',
             message: msg
           })
-          $laconic.data.updateDataSource({
+          $lc.data.updateDataSource({
             payload: {
               name: 'products-table',
               ...MockDataService.getTableData()
             }
           })
-          $laconic.ui.gotoScreen({ screen: 'viewproducts' })
+          $lc.ui.gotoScreen({ screen: 'viewproducts' })
         }
       }
     },
     editproduct: {
       isnavigable: false,
-      isvisible: () => $laconic.state.loggedIn === true,
+      isvisible: () => $lc.state.loggedIn === true,
       title: 'Edit Product',
       productId: {
         type: 'input',
@@ -108,35 +108,35 @@ $laconic.ui.define({
         const [success, msg] = MockDataService.updateRecord(data.productId, { sku: data.sku, price: data.price, name: data.productName })
 
         if (!success) {
-          $laconic.ui.notify({
+          $lc.ui.notify({
             status: 'error',
             message: `Error: ${msg}`
           })
         } else {
-          $laconic.ui.notify({
+          $lc.ui.notify({
             status: 'success',
             message: msg
           })
-          $laconic.data.updateDataSource({
+          $lc.data.updateDataSource({
             payload: {
               name: 'products-table',
               ...MockDataService.getTableData()
             }
           })
-          $laconic.ui.gotoScreen({
+          $lc.ui.gotoScreen({
             screen: 'viewproducts'
           })
         }
       }
     },
     viewproducts: {
-      isvisible: () => $laconic.state.loggedIn === true,
+      isvisible: () => $lc.state.loggedIn === true,
       title: 'Products',
       weight: 0,
       addButton: {
         type: 'button',
         label: 'add new product',
-        onclick: function() {$laconic.ui.gotoScreen({screen: 'addproduct'})}
+        onclick: function () { $lc.ui.gotoScreen({ screen: 'addproduct' }) }
       },
       tableview: {
         type: 'table',
@@ -146,7 +146,7 @@ $laconic.ui.define({
             text: 'Edit',
             callback: function (row) {
               const record = row.raw
-              $laconic.ui.gotoScreen({
+              $lc.ui.gotoScreen({
                 screen: 'editproduct',
                 fieldValues: {
                   productId: record._id,
@@ -161,7 +161,7 @@ $laconic.ui.define({
             text: 'Delete',
             callback: function (row) {
               const record = row.raw
-              $laconic.ui.dialog({
+              $lc.ui.dialog({
                 title: 'Confirmation',
                 text: 'Are you sure? This operation is irreversible.',
                 operations: [
@@ -171,22 +171,22 @@ $laconic.ui.define({
                       const [success, msg] = MockDataService.deleteRecord(record._id)
 
                       if (!success) {
-                        $laconic.ui.notify({
+                        $lc.ui.notify({
                           status: 'error',
                           message: `Error: ${msg}`
                         })
                       } else {
-                        $laconic.ui.notify({
+                        $lc.ui.notify({
                           status: 'success',
                           message: msg
                         })
-                        $laconic.data.updateDataSource({
+                        $lc.data.updateDataSource({
                           payload: {
                             name: 'products-table',
                             ...MockDataService.getTableData()
                           }
                         })
-                        $laconic.ui.notify({
+                        $lc.ui.notify({
                           screen: 'viewproducts'
                         })
                       }
@@ -204,7 +204,7 @@ $laconic.ui.define({
   } // screens
 })
 
-$laconic.ui.setBranding({
+$lc.ui.setBranding({
   payload: {
     header: {
       size: '40px',
@@ -219,7 +219,7 @@ $laconic.ui.setBranding({
 })
 
 document.addEventListener('DOMContentLoaded', function () {
-  $laconic.data.updateDataSource({
+  $lc.data.updateDataSource({
     payload: {
       name: 'products-table',
       ...MockDataService.getTableData()
