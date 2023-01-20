@@ -15,7 +15,7 @@ this.
 ### npm
 
 ```shell
-npm i laconic-ui
+npm i @codomatech/laconic-ui
 ```
 
 ### browser
