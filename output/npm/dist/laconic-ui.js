@@ -15,15 +15,29 @@ const Store = new Vue({
   }
 });
 
-console.debug('laconic store = ', Store);
+// TODO create a command to populate fields of current screen, manipulate this.val here
+// probably consolidate goto-screen to take initial values
 
 // TODO replace this with a component whose template depends on curscreen
-function renderscreen (name, screen) {
+function renderscreen (name, screen, fieldValues) {
+  if (!name) return
+  // console.trace('rendering screen', name, screen.name)
+
   if (Store.state.curscreen.name === name) return
+
+  fieldValues = fieldValues || {};
 
   Store.state.curscreen.name = name;
   Store.state.curscreen.components = [];
+
+  let first = true;
   Object.keys(screen).map(async key => {
+    if (first) {
+      // dummy component to reset state before rendering a screen
+      await screenBegin();
+      first = false;
+    }
+
     const component = screen[key];
     if (key === 'title') {
       await title(component, key);
@@ -36,55 +50,61 @@ function renderscreen (name, screen) {
       return
     }
     // console.log(key, component.type)
-    switch (component.type) {
-      case 'select':
-        await select(component, key);
-        break
+    const type2func = {
+      select: select,
+      input: inpText,
+      number: inpNumber,
+      email: inpEmail,
+      password: inpPassword,
+      textarea: textarea,
+      button: button,
+      submit: submitBtn,
+      table: table
+    };
 
-      case 'input':
-        await inpText(component, key);
-        break
+    const func = type2func[component.type];
 
-      case 'number':
-        await inpNumper(component, key);
-        break
-
-      case 'email':
-        await inpEmail(component, key);
-        break
-
-      case 'password':
-        await inpPassword(component, key);
-        break
-
-      case 'textarea':
-        await textarea(component, key);
-        break
-
-      case 'submit':
-        await submitBtn(component, key);
-        break
-
-      case 'table':
-        await table(component, key);
-        break
-
-      default:
-        console.error('undefined component:', component);
+    if (!func) {
+      console.error('undefined component:', component);
+      return
     }
+
+    const c = await func(component, key, fieldValues[key]); // TODO make concurrent
+    Store.state.curscreen.components.push(c);
+    // console.debug('last added component = ', c)
+    // c.options.methods.sendToParent()
   });
 }
 
 // patterns
 
-const title = async (text, key) => {
+// clearFieldState
+
+const screenBegin = async (_, key, ___) => {
   const comp = await Vue.component(`app-${key}`, {
-    template: `<div class="screen-title text-h3">${text}</div>`
+    template: '',
+    //     methods: {
+    //       sendToParent () {
+    //         const obj = {}
+    //         obj[key] = this.val
+    //         this.$emit('sendToParent', obj)
+    //       }
+    //     },
+    mounted () {
+      this.$emit('clearFieldState');
+    }
   });
-  Store.state.curscreen.components.push(comp);
+  return comp
 };
 
-const select = async (values, key) => {
+const title = async (text, key) => {
+  const comp = await Vue.component(`app-${key}`, {
+    template: `<div class="lc screen-title text-h3">${text}</div>`
+  });
+  return comp
+};
+
+const select = async (values, key, curValue) => {
   const optionsArr = [];
   for (const key of Object.keys(values.options)) {
     const obj = {
@@ -95,7 +115,7 @@ const select = async (values, key) => {
   }
   const comp = await Vue.component(`app-${key}`, {
     template: `
-            <div>
+            <div class="lc select ${key}">
                     <v-select
                      :items="items"
                      item-text="value"
@@ -111,7 +131,7 @@ const select = async (values, key) => {
       return {
         values: values,
         items: optionsArr,
-        selected: []
+        selected: curValue || []
       }
     },
     methods: {
@@ -122,24 +142,42 @@ const select = async (values, key) => {
       }
     }
   });
-  Store.state.curscreen.components.push(comp);
+  return comp
 };
 
-const inpText = async (values, key) => {
+const inpText = async (values, key, curValue) => {
+  let markup = '';
+
+  if (values.hidden === true) {
+    markup = `
+      <input type="hidden"
+        @input="sendToParent"
+        v-model="val">
+      `;
+  } else {
+    const addTags = [];
+    if (values.readOnly === true) { addTags.push('readonly'); }
+    if (values.disabled === true) { addTags.push('disabled'); }
+
+    markup = `
+    <v-text-field
+      type="text"
+      label="${values.label}"
+      @input="sendToParent"
+      v-model="val"
+      ${addTags.join(' ')}
+      ></v-text-field>
+      `;
+  }
   const comp = await Vue.component(`app-${key}`, {
     template: `
-            <div class="component input ${key}">
-                <v-text-field
-                type="text"
-                label="${values.label}"
-                @change="sendToParent"
-                v-model="val"
-                ></v-text-field>
+            <div class="lc input ${key}">
+              ${markup}
             </div>
         `,
     data () {
       return {
-        val: null
+        val: curValue
       }
     },
     methods: {
@@ -148,27 +186,32 @@ const inpText = async (values, key) => {
         obj[key] = this.val;
         this.$emit('sendToParent', obj);
       }
+    },
+    mounted () {
+      // NOTE: trigger change event to initialize the pagData
+      // useful when there the fields are initialized
+      this.sendToParent();
     }
   });
-  Store.state.curscreen.components.push(comp);
+  return comp
 };
 
-const inpEmail = async (values, key) => {
+const inpEmail = async (values, key, curValue) => {
   const comp = await Vue.component(`app-${key}`, {
     template: `
-          <div>
+          <div class="lc input email ${key}">
               <v-text-field
               type="text"
               :rules="[rules.required, rules.email]"
               label="${values.label}"
-              @change="sendToParent"
+              @input="sendToParent"
               v-model="val"
               ></v-text-field>
           </div>
       `,
     data () {
       return {
-        val: null,
+        val: curValue,
         rules: {
           required: value => !!value || 'Required.',
           counter: value => (value && value.length <= 20) || 'Max 20 characters',
@@ -185,22 +228,27 @@ const inpEmail = async (values, key) => {
         obj[key] = this.val;
         this.$emit('sendToParent', obj);
       }
+    },
+    mounted () {
+      // NOTE: trigger change event to initialize the pagData
+      // useful when there the fields are initialized
+      this.sendToParent();
     }
   });
-  Store.state.curscreen.components.push(comp);
+  return comp
 };
 
-const inpPassword = async (values, key) => {
+const inpPassword = async (values, key, curValue) => {
   const comp = await Vue.component(`app-${key}`, {
     template: `
-          <div>
+          <div class="lc input password ${key}">
               <v-text-field
               :type="show ? 'text' : 'password'"
               :append-icon="show ? 'visibility' : 'visibility_off'"
               :rules="[rules.required, rules.min]"
               label="${values.label}"
               hint="At least 8 characters"
-              @change="sendToParent"
+              @input="sendToParent"
               @click:append="show = !show"
               v-model="val"
               ></v-text-field>
@@ -208,7 +256,7 @@ const inpPassword = async (values, key) => {
       `,
     data () {
       return {
-        val: null,
+        val: curValue,
         show: false,
         rules: {
           required: value => !!value || 'Required.',
@@ -223,26 +271,31 @@ const inpPassword = async (values, key) => {
         obj[key] = this.val;
         this.$emit('sendToParent', obj);
       }
+    },
+    mounted () {
+      // NOTE: trigger change event to initialize the pagData
+      // useful when there the fields are initialized
+      this.sendToParent();
     }
   });
-  Store.state.curscreen.components.push(comp);
+  return comp
 };
 
-const inpNumper = async (values, key) => {
+const inpNumber = async (values, key, curValue) => {
   const comp = await Vue.component(`app-${key}`, {
     template: `
-            <div>
+            <div class="lc input number ${key}">
                 <v-text-field
                 type="number"
                 label="${values.label}"
-                @change="sendToParent"
+                @input="sendToParent"
                 v-model="val"
                 ></v-text-field>
             </div>
         `,
     data () {
       return {
-        val: null
+        val: curValue
       }
     },
     methods: {
@@ -251,27 +304,32 @@ const inpNumper = async (values, key) => {
         obj[key] = this.val;
         this.$emit('sendToParent', obj);
       }
+    },
+    mounted () {
+      // NOTE: trigger change event to initialize the pagData
+      // useful when there the fields are initialized
+      this.sendToParent();
     }
   });
-  Store.state.curscreen.components.push(comp);
+  return comp
 };
 
-const textarea = async (values, key) => {
+const textarea = async (values, key, curValue) => {
   const comp = await Vue.component(`app-${key}`, {
     template: `
-            <div>
+            <div class="lc textarea ${key}">
                 <v-textarea
                 name="input-7-1"
                 filled label="${values.label}"
                 auto-grow
-                @change="sendToParent"
+                @input="sendToParent"
                 v-model="val"
                 ></v-textarea>
             </div>
         `,
     data () {
       return {
-        val: null
+        val: curValue
       }
     },
     methods: {
@@ -280,15 +338,20 @@ const textarea = async (values, key) => {
         obj[key] = this.val;
         this.$emit('sendToParent', obj);
       }
+    },
+    mounted () {
+      // NOTE: trigger change event to initialize the pagData
+      // useful when there the fields are initialized
+      this.sendToParent();
     }
   });
-  Store.state.curscreen.components.push(comp);
+  return comp
 };
 
-const submitBtn = async (values, key) => {
+const submitBtn = async (values, key, _) => {
   const comp = await Vue.component(`app-${key}`, {
     template: `
-            <div>
+            <div class="lc button submit ${key}">
                 <v-btn @click="submit">${
   values.label
 }</v-btn>
@@ -300,13 +363,33 @@ const submitBtn = async (values, key) => {
       }
     }
   });
-  Store.state.curscreen.components.push(comp);
+  return comp
 };
 
-const table = async (values, key) => {
+const button = async (values, key, _) => {
+  const comp = await Vue.component(`app-${key}`, {
+    template: `
+            <div class="lc button ${key}">
+                <v-btn @click="${values.onclick}">${
+  values.label
+}</v-btn>
+            </div>
+        `,
+    methods: {
+      submit () {
+        this.$emit('submitForm', { type: 'submit' });
+      }
+    }
+  });
+  return comp
+};
+
+const table = async (values, key, _) => {
+  const $interface = Store.$interface;
   $interface.state.dsources[values.datasource] =
-    $interface.state.dsources[values.datasource] || { display: [], raw: [] };
-  const rowcursor = values.operations ? 'pointer' : 'auto';
+  $interface.state.dsources[values.datasource] || { display: [], raw: [] };
+  const operations0 = values.operations;
+  const rowClass = operations0 ? 'clickable' : '';
   const comp = await Vue.component(`app-${key}`, {
     data: function () {
       return {
@@ -315,50 +398,47 @@ const table = async (values, key) => {
     },
     methods: {
       showeditdialog: function (index) {
-        const tabledata = this.$data.tabledata;
-        if (!values.operations) return
+        const tabledata = this.$data.dsource;
+        const operations = tabledata.operations || operations0;
+        if (!operations) return
+        const rawRecord = {};
+        const vals = tabledata.raw[index + 1];
+        for (let i = 0; i < vals.length; i++) {
+          rawRecord[tabledata.raw[0][i]] = vals[i];
+        }
+        // console.debug('showing dialog with row', rawRecord)
         $interface.bus.emit('gui', {
           op: 'dialog',
-          content: 'The following operations are available:',
-          actions: values.operations,
-          args: [{ display: tabledata.display[index], raw: tabledata.raw[index] }]
+          title: '',
+          text: '',
+          operations: operations,
+          args: [{ display: tabledata.display.rows[index], raw: rawRecord }]
         });
       }
     },
     template: `
-
-    <v-data-table
-        :headers="dsource.display.header"
-        :items="dsource.display.rows"
-        :items-per-page="5"
-        class="elevation-1"
-        ></v-data-table>
-
-
-    <!--
-    <table>
+    <table class="lc table ${key}">
         <thead>
         <tr>
-            <td v-for="cell in tabledata.display[0] || []">
-            {{cell}}
+            <td v-for="header in dsource.display.header">
+            {{header.text}}
             </td>
         </tr>
         </thead>
         <tbody>
         <tr
-            v-for="(entry, index) in (tabledata.display.length>0 ? tabledata.display.slice(1) : [])"
-            v-on:click="showeditdialog(index+1)"
-            style="cursor: ${rowcursor};">
+            v-for="(entry, index) in dsource.display.rows"
+            v-on:click="showeditdialog(index)"
+            class="${rowClass}">
             <td v-for="cell in entry">
             {{cell}}
             </td>
         </tr>
         </tbody>
     </table>
-    -->
     `
   });
-  Store.state.curscreen.components.push(comp);
+  return comp
 };
 
 const scomponents = {};
@@ -414,6 +494,7 @@ scomponents.Applist = Vue.component('app-list', {
 
             <v-list-item link v-for="doc in btnData" :key="doc.btnRoute"
                 @click="navigateTo(doc.btnRoute)"
+                v-show="!doc.hidden"
                 >
                 <!--<v-list-item-title>-->
                 <v-list-item-action>
@@ -437,29 +518,34 @@ scomponents.Applist = Vue.component('app-list', {
 
   computed: {
     btnData: function () {
-      return Object.keys(Store.state.screens).filter((key) => {
+      const drawerElements = Object.keys(Store.state.screens).filter((key) => {
         const screen = Store.state.screens[key];
         // console.debug('static components: checking screen visibilty', key, screen)
         return (!screen.isvisible || screen.isvisible() === true)
       }).map(key => {
+        const screen = Store.state.screens[key];
         const obj = {
-          name: Store.state.screens[key].title,
-          btnRoute: key
+          name: screen.title,
+          btnRoute: key,
+          hidden: screen.isnavigable === false
         };
         return obj
-      })
+      }).sort((a, b) => (a.weight || 9999) > (b.weight || 9999) ? 1 : -1);
+      // console.debug('drawerElements', drawerElements)
+      return drawerElements
     }
   },
 
   methods: {
     navigateTo (route) {
       Store.state.curscreen = Store.state.screens[route];
-      console.log('navigateTo', route, 'current=', this.$router.currentRoute.path, Store.state.curscreen);
+      // console.log('navigateTo', route, 'current=', this.$router.currentRoute.path, Store.state.curscreen)
       if (route === this.$router.currentRoute.path.substring(1)) {
         return
       }
       this.$router.push('/' + route);
-      // nstScreen = Store.state.screens[route];
+      // nstScreen = Store.state.screens[route]
+      // console.debug('rendering screen', Store.state.curscreens)
       renderscreen(route, Store.state.curscreen);
     }
   }
@@ -483,12 +569,13 @@ const dcomponents = new Vue({
         path: '/' + ID,
         component: Vue.component(`app-${ID}`, {
           template: `
-                    <section id="${ID}" class="screen">
+                    <section id="${ID}" class="lc screen ${ID}">
                         <form>
                             <template v-for="(comp, index) in curscreen">
                                 <component
                                 :is="comp"
                                 :key="index"
+                                @clearFieldState="this.PageData = []"
                                 @sendToParent="saveData($event)"
                                 @submitForm="submitForm($event)"
                                 ></component>
@@ -501,38 +588,32 @@ const dcomponents = new Vue({
             return {
               curscreen: Store.state.curscreen.components,
               PageData: [],
-              screen: ID,
-              finalObj: null
+              screen: ID
             }
           },
           methods: {
             async saveData (d) {
+              // console.debug('saveData', d, this.PageData)
               if (!this.PageData.length) {
                 this.PageData.push(d);
                 return
               }
 
-              const filterdArr = await this.PageData.filter(
-                doc => Object.keys(doc) !== Object.keys(d)[0]
-              );
-              this.PageData = filterdArr;
+              //               const filterdArr = await this.PageData.filter(
+              //                 doc => Object.keys(doc) !== Object.keys(d)[0]
+              //               )
+              //               this.PageData = filterdArr
               this.PageData.push(d);
             },
 
-            submitForm (d) {
-              const resultObject = this.PageData.reduce((result, currentObject) => {
+            submitForm (_d) {
+              const fieldValues = this.PageData.reduce((result, currentObject) => {
                 for (const key of Object.keys(currentObject)) {
                   result[key] = currentObject[key];
                 }
                 return result
               }, {});
-              this.finalObj = resultObject;
-              const obj = {
-                screen: this.screen,
-                type: d.type,
-                payload: this.finalObj
-              };
-              Store.state.screens[ID].submithandler(obj);
+              Store.state.screens[ID].submithandler(fieldValues);
             }
           }
         })
@@ -549,6 +630,7 @@ function registerbusevents ($interface) {
   $interface.bus.on('gui', data => {
     switch (data.op) {
       case 'define': {
+        // TODO validate screens, e.g. a ui component can't have the key `name`
         Store.state.screens = data.screens;
         Store.state.curscreen.name = null;
         const $router = $interface.$app.$router;
@@ -577,15 +659,26 @@ function registerbusevents ($interface) {
           if (!target || (screen.isvisible && screen.isvisible() !== true)) {
             target = '/';
           } else {
-            renderscreen(target, screen);
+            renderscreen(target, screen, data.fieldValues);
           }
           console.debug('trying to navigate to invisible screen, aborting', target, Store.state.homeScreen);
           $router.push(target);
           break
         }
-        renderscreen(target, screen);
+        renderscreen(target, screen, data.fieldValues);
 
         if ($router.currentRoute.path !== '/' + data.screen) { $router.push(data.screen); }
+        break
+      }
+
+      case 'populate-fields': {
+        const curScreen = Store.state.curscreen.name;
+        const screen = Store.state.screens[curScreen];
+        if (!screen) {
+          console.error('populate-fields: current screen is not defined yet, try later?', curScreen);
+          break
+        }
+        renderscreen(curScreen, screen, data.fieldValues);
         break
       }
 
@@ -598,7 +691,7 @@ function registerbusevents ($interface) {
           case 'warn':
             icon = 'warning';
             break
-          case 'danger':
+          case 'error':
             icon = 'error';
             break
         }
@@ -610,14 +703,26 @@ function registerbusevents ($interface) {
 
         break
       }
-      // handle static components events
-      case 'set-branding':
-        Store.state.staticComponents = data.payload;
-        break
 
-        // update datasource
+      case 'dialog': {
+        const dialog = $interface.state.dialog;
+        dialog.title = data.title;
+        dialog.text = data.text;
+        dialog.operations = data.operations || [];
+        dialog.args = data.args || [];
+        dialog.active = true;
+        break
+      }
+
+      case 'set-branding': {
+        Store.state.staticComponents = data;
+        break
+      }
+
       case 'update-datasource': {
-        const payload = data.payload;
+        // NOTE: imperatively update a dataseource with a given name.
+        // TODO make the datasource reactive and remove this command: cf. https://github.com/codomatech/laconic-ui/issues/9
+        const payload = data;
         if (!$interface.state.dsources[payload.name]) {
           // console.debug('datasource not ready yet, will retry shortly', payload.name)
           setTimeout(function () { $interface.bus.emit('gui', data); }, 500);
@@ -650,18 +755,16 @@ function registerbusevents ($interface) {
   });
 }
 
-// TODO make part of the state observable, on update increment
-// key to force reload the whole app: https://stackoverflow.com/questions/32106155/can-you-force-vue-js-to-reload-re-render
 const initialState = {
-  dsources: {
-  },
-  notification: { active: false, text: '' }
+  dsources: {},
+  notification: { active: false, text: '' },
+  dialog: { active: false, title: '', text: '', operations: [] }
 };
 
 const state = new Proxy(initialState, {
   set: (obj, prop, value) => {
     $interface.$app.$children[0].version++;
-    console.debug('updating ui version to', $interface.$app.$children[0].version);
+    // console.debug('updating ui version to', $interface.$app.$children[0].version)
     obj[prop] = value;
 
     // current screen might be no longer visible, refresh
@@ -678,6 +781,10 @@ const $interface = {
 
 registerbusevents($interface);
 
+// internal components need to use the exported library sometimes, we save a reference
+// in the internal state to avoid circular includes
+Store.$interface = $interface;
+
 // Start the app
 Vue.prototype.$interface = $interface;
 
@@ -691,7 +798,11 @@ Vue.use(Vuetify);
 Vue.use(VueRouter);
 
 const mainComponent = Vue.component('laconic-main', {
-  data: () => ({ drawer: null, notification: $interface.state.notification }),
+  data: () => ({
+    drawer: null,
+    notification: $interface.state.notification,
+    dialog: $interface.state.dialog
+  }),
   props: ['version'],
   template: `
       <v-app :key="version">
@@ -714,7 +825,7 @@ const mainComponent = Vue.component('laconic-main', {
 
         <app-footer></app-footer>
 
-
+        <!-- notification -->
         <v-snackbar
             v-model="notification.active"
         >
@@ -731,8 +842,37 @@ const mainComponent = Vue.component('laconic-main', {
             </template>
         </v-snackbar>
 
+        <!-- dialog -->
+        <v-dialog
+          v-model="dialog.active"
+          max-width="500"
+        >
+          <v-card>
+            <v-card-title v-if="dialog.title" class="text-h5 grey lighten-2">
+              {{ dialog.title }}
+            </v-card-title>
+
+            <v-card-text  v-if="dialog.text">
+              {{ dialog.text }}
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                v-for="op in dialog.operations"
+                color="primary"
+                text
+                @click="let keep = (op.callback || function(){})(...dialog.args); dialog.active = keep === true"
+              >
+                {{ op.text }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-app>
-  `
+`
 });
 
 $interface.$app = new Vue({
@@ -742,6 +882,21 @@ $interface.$app = new Vue({
   render: h => h(mainComponent)
 }).$mount('#app');
 
+// initialize ui version. this is how we update ui screens when state changes
 $interface.$app.$children[0].version = 0;
+
+// expose public API
+$interface.ui = {
+  define: (config) => $interface.bus.emit('gui', { op: 'define', ...config }),
+  gotoScreen: (config) => $interface.bus.emit('gui', { op: 'goto-screen', ...config }),
+  notify: (config) => $interface.bus.emit('gui', { op: 'notify', ...config }),
+  dialog: (config) => $interface.bus.emit('gui', { op: 'dialog', ...config }),
+  setBranding: (config) => $interface.bus.emit('gui', { op: 'set-branding', ...config }),
+  populateFields: (config) => $interface.bus.emit('gui', { op: 'populate-fields', ...config })
+};
+
+$interface.data = {
+  updateDataSource: (config) => $interface.bus.emit('gui', { op: 'update-datasource', ...config })
+};
 
 export { $interface as default };

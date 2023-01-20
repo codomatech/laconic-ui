@@ -1,4 +1,4 @@
-var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
+var $lc = (function (Eev, Vue, Vuetify, VueRouter) {
   'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -25,6 +25,9 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
 
   // TODO replace this with a component whose template depends on curscreen
   function renderscreen (name, screen, fieldValues) {
+    if (!name) return
+    // console.trace('rendering screen', name, screen.name)
+
     if (Store.state.curscreen.name === name) return
 
     fieldValues = fieldValues || {};
@@ -101,7 +104,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
 
   const title = async (text, key) => {
     const comp = await Vue__default["default"].component(`app-${key}`, {
-      template: `<div class="screen-title text-h3">${text}</div>`
+      template: `<div class="lc screen-title text-h3">${text}</div>`
     });
     return comp
   };
@@ -117,7 +120,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
     }
     const comp = await Vue__default["default"].component(`app-${key}`, {
       template: `
-            <div>
+            <div class="lc select ${key}">
                     <v-select
                      :items="items"
                      item-text="value"
@@ -173,7 +176,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
     }
     const comp = await Vue__default["default"].component(`app-${key}`, {
       template: `
-            <div class="component input ${key}">
+            <div class="lc input ${key}">
               ${markup}
             </div>
         `,
@@ -201,7 +204,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
   const inpEmail = async (values, key, curValue) => {
     const comp = await Vue__default["default"].component(`app-${key}`, {
       template: `
-          <div>
+          <div class="lc input email ${key}">
               <v-text-field
               type="text"
               :rules="[rules.required, rules.email]"
@@ -243,7 +246,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
   const inpPassword = async (values, key, curValue) => {
     const comp = await Vue__default["default"].component(`app-${key}`, {
       template: `
-          <div>
+          <div class="lc input password ${key}">
               <v-text-field
               :type="show ? 'text' : 'password'"
               :append-icon="show ? 'visibility' : 'visibility_off'"
@@ -286,7 +289,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
   const inpNumber = async (values, key, curValue) => {
     const comp = await Vue__default["default"].component(`app-${key}`, {
       template: `
-            <div>
+            <div class="lc input number ${key}">
                 <v-text-field
                 type="number"
                 label="${values.label}"
@@ -319,7 +322,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
   const textarea = async (values, key, curValue) => {
     const comp = await Vue__default["default"].component(`app-${key}`, {
       template: `
-            <div>
+            <div class="lc textarea ${key}">
                 <v-textarea
                 name="input-7-1"
                 filled label="${values.label}"
@@ -353,7 +356,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
   const submitBtn = async (values, key, _) => {
     const comp = await Vue__default["default"].component(`app-${key}`, {
       template: `
-            <div>
+            <div class="lc button submit ${key}">
                 <v-btn @click="submit">${
   values.label
 }</v-btn>
@@ -371,8 +374,8 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
   const button = async (values, key, _) => {
     const comp = await Vue__default["default"].component(`app-${key}`, {
       template: `
-            <div>
-                <v-btn @click="${values.onclick()}">${
+            <div class="lc button ${key}">
+                <v-btn @click="${values.onclick}">${
   values.label
 }</v-btn>
             </div>
@@ -387,8 +390,9 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
   };
 
   const table = async (values, key, _) => {
+    const $interface = Store.$interface;
     $interface.state.dsources[values.datasource] =
-      $interface.state.dsources[values.datasource] || { display: [], raw: [] };
+    $interface.state.dsources[values.datasource] || { display: [], raw: [] };
     const operations0 = values.operations;
     const rowClass = operations0 ? 'clickable' : '';
     const comp = await Vue__default["default"].component(`app-${key}`, {
@@ -407,7 +411,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
           for (let i = 0; i < vals.length; i++) {
             rawRecord[tabledata.raw[0][i]] = vals[i];
           }
-          console.debug('showing dialog with row', rawRecord);
+          // console.debug('showing dialog with row', rawRecord)
           $interface.bus.emit('gui', {
             op: 'dialog',
             title: '',
@@ -418,16 +422,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
         }
       },
       template: `
-    <!--
-    <v-data-table
-        :headers="dsource.display.header"
-        :items="dsource.display.rows"
-        :items-per-page="5"
-        class="elevation-1"
-        ></v-data-table>
-    -->
-
-    <table class="lc-table">
+    <table class="lc table ${key}">
         <thead>
         <tr>
             <td v-for="header in dsource.display.header">
@@ -528,7 +523,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
 
     computed: {
       btnData: function () {
-        return Object.keys(Store.state.screens).filter((key) => {
+        const drawerElements = Object.keys(Store.state.screens).filter((key) => {
           const screen = Store.state.screens[key];
           // console.debug('static components: checking screen visibilty', key, screen)
           return (!screen.isvisible || screen.isvisible() === true)
@@ -537,22 +532,25 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
           const obj = {
             name: screen.title,
             btnRoute: key,
-            hidden: screen.isnavigable === false,
+            hidden: screen.isnavigable === false
           };
           return obj
-        }).sort((a, b) => (a.weight || 9999) > (b.weight || 9999)? 1: -1)
+        }).sort((a, b) => (a.weight || 9999) > (b.weight || 9999) ? 1 : -1);
+        // console.debug('drawerElements', drawerElements)
+        return drawerElements
       }
     },
 
     methods: {
       navigateTo (route) {
         Store.state.curscreen = Store.state.screens[route];
-        console.log('navigateTo', route, 'current=', this.$router.currentRoute.path, Store.state.curscreen);
+        // console.log('navigateTo', route, 'current=', this.$router.currentRoute.path, Store.state.curscreen)
         if (route === this.$router.currentRoute.path.substring(1)) {
           return
         }
         this.$router.push('/' + route);
-        // nstScreen = Store.state.screens[route];
+        // nstScreen = Store.state.screens[route]
+        // console.debug('rendering screen', Store.state.curscreens)
         renderscreen(route, Store.state.curscreen);
       }
     }
@@ -576,7 +574,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
           path: '/' + ID,
           component: Vue__default["default"].component(`app-${ID}`, {
             template: `
-                    <section id="${ID}" class="screen">
+                    <section id="${ID}" class="lc screen ${ID}">
                         <form>
                             <template v-for="(comp, index) in curscreen">
                                 <component
@@ -613,7 +611,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
                 this.PageData.push(d);
               },
 
-              submitForm (d) {
+              submitForm (_d) {
                 const fieldValues = this.PageData.reduce((result, currentObject) => {
                   for (const key of Object.keys(currentObject)) {
                     result[key] = currentObject[key];
@@ -722,14 +720,14 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
         }
 
         case 'set-branding': {
-          Store.state.staticComponents = data.payload;
+          Store.state.staticComponents = data;
           break
         }
 
         case 'update-datasource': {
           // NOTE: imperatively update a dataseource with a given name.
           // TODO make the datasource reactive and remove this command: cf. https://github.com/codomatech/laconic-ui/issues/9
-          const payload = data.payload;
+          const payload = data;
           if (!$interface.state.dsources[payload.name]) {
             // console.debug('datasource not ready yet, will retry shortly', payload.name)
             setTimeout(function () { $interface.bus.emit('gui', data); }, 500);
@@ -771,7 +769,7 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
   const state = new Proxy(initialState, {
     set: (obj, prop, value) => {
       $interface.$app.$children[0].version++;
-      console.debug('updating ui version to', $interface.$app.$children[0].version);
+      // console.debug('updating ui version to', $interface.$app.$children[0].version)
       obj[prop] = value;
 
       // current screen might be no longer visible, refresh
@@ -787,6 +785,10 @@ var $laconic = (function (Eev, Vue, Vuetify, VueRouter) {
   };
 
   registerbusevents($interface);
+
+  // internal components need to use the exported library sometimes, we save a reference
+  // in the internal state to avoid circular includes
+  Store.$interface = $interface;
 
   // Start the app
   Vue__default["default"].prototype.$interface = $interface;
