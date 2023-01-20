@@ -73,10 +73,8 @@ $lc.ui.define({
             message: msg
           })
           $lc.data.updateDataSource({
-            payload: {
-              name: 'products-table',
-              ...MockDataService.getTableData()
-            }
+            name: 'products-table',
+            ...MockDataService.getTableData()
           })
           $lc.ui.gotoScreen({ screen: 'viewproducts' })
         }
@@ -118,10 +116,8 @@ $lc.ui.define({
             message: msg
           })
           $lc.data.updateDataSource({
-            payload: {
-              name: 'products-table',
-              ...MockDataService.getTableData()
-            }
+            name: 'products-table',
+            ...MockDataService.getTableData()
           })
           $lc.ui.gotoScreen({
             screen: 'viewproducts'
@@ -181,12 +177,10 @@ $lc.ui.define({
                           message: msg
                         })
                         $lc.data.updateDataSource({
-                          payload: {
-                            name: 'products-table',
-                            ...MockDataService.getTableData()
-                          }
+                          name: 'products-table',
+                          ...MockDataService.getTableData()
                         })
-                        $lc.ui.notify({
+                        $lc.ui.gotoScreen({
                           screen: 'viewproducts'
                         })
                       }
@@ -205,25 +199,21 @@ $lc.ui.define({
 })
 
 $lc.ui.setBranding({
-  payload: {
-    header: {
-      size: '40px',
-      imgSrc:
-        'https://cdn.cdnlogo.com/logos/c/58/cloudlinux.svg',
-      title: 'Store Dashboard'
-    },
-    footer: {
-      text: 'All rights reserved to Example Firm'
-    }
+  header: {
+    size: '40px',
+    imgSrc:
+      'https://cdn.cdnlogo.com/logos/c/58/cloudlinux.svg',
+    title: 'Store Dashboard'
+  },
+  footer: {
+    text: 'All rights reserved to Example Firm'
   }
 })
 
 document.addEventListener('DOMContentLoaded', function () {
   $lc.data.updateDataSource({
-    payload: {
-      name: 'products-table',
-      ...MockDataService.getTableData()
-    }
+    name: 'products-table',
+    ...MockDataService.getTableData()
   })
 })
 
