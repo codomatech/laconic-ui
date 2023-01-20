@@ -1,15 +1,14 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [`laconic-ui` API Documentation](#laconic-ui-api-documentation)
   - [The Framework API](#the-framework-api)
     - [`$lc.ui.define (screensConfig)`](#lcuidefine-screensconfig)
-    - [`$lc.ui.setBranding ({title: <title>, text: <text>, operations: [<operation0>, <operation1>, ...]})](#lcuisetbranding-title-title-text-text-operations-operation0-operation1-)
+    - [`$lc.ui.setBranding ({title: <title>, text: <text>, operations: [<operation0>, <operation1>, ...]})`](#lcuisetbranding-title-title-text-text-operations-operation0-operation1-)
     - [`$lc.ui.gotoScreen ({screen: <screenIdentifier>, fieldValues?: <fieldValues> })`](#lcuigotoscreen-screen-screenidentifier-fieldvalues-fieldvalues-)
-    - [`$lc.ui.notify ({status: <status>, message: <message>})](#lcuinotify-status-status-message-message)
-    - [`$lc.ui.dialog ({title: <title>, text: <text>, operations: [<operation0>, <operation1>, ...]})](#lcuidialog-title-title-text-text-operations-operation0-operation1-)
-    - [`$lc.data.updateDataSource ({name: <name>, raw: <rawData>, display: <displayData>})](#lcdataupdatedatasource-name-name-raw-rawdata-display-displaydata)
+    - [`$lc.ui.notify ({status: <status>, message: <message>})`](#lcuinotify-status-status-message-message)
+    - [`$lc.ui.dialog ({title: <title>, text: <text>, operations: [<operation0>, <operation1>, ...]})`](#lcuidialog-title-title-text-text-operations-operation0-operation1-)
+    - [`$lc.data.updateDataSource ({name: <name>, raw: <rawData>, display: <displayData>})`](#lcdataupdatedatasource-name-name-raw-rawdata-display-displaydata)
   - [Styling the App](#styling-the-app)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -38,7 +37,7 @@ It is planned to document all elements here, until then please check the first c
 [the example app](./examples/browser/app.js).
 
 
-### `$lc.ui.setBranding ({title: <title>, text: <text>, operations: [<operation0>, <operation1>, ...]})
+### `$lc.ui.setBranding ({title: <title>, text: <text>, operations: [<operation0>, <operation1>, ...]})`
 ____
 Use this to set the app's branding in header and footer. This is best shown by example:
 
@@ -63,7 +62,7 @@ to view what they just updated.
 Optionally, you can also provide the initial values of screen elements via `fieldValues`.
 
 
-### `$lc.ui.notify ({status: <status>, message: <message>})
+### `$lc.ui.notify ({status: <status>, message: <message>})`
 ____
 Use this to notify the user with a message. The notification appears at the bottom of the screen
 (commonly known as a *toast*).
@@ -71,7 +70,7 @@ Use this to notify the user with a message. The notification appears at the bott
 `status` can be one of `'success'`, `'warn'`, `'error'`. `message` can be any text.
 
 
-### `$lc.ui.dialog ({title: <title>, text: <text>, operations: [<operation0>, <operation1>, ...]})
+### `$lc.ui.dialog ({title: <title>, text: <text>, operations: [<operation0>, <operation1>, ...]})`
 ____
 Use this to show the user a message and get them to choose to do some operation.
 `title` and `text` are free text. `operations` is an array of objects. Each of them has the following fields:
@@ -82,7 +81,7 @@ Use this to show the user a message and get them to choose to do some operation.
   dialog), then simply return `true` in the callback.
 
 
-### `$lc.data.updateDataSource ({name: <name>, raw: <rawData>, display: <displayData>})
+### `$lc.data.updateDataSource ({name: <name>, raw: <rawData>, display: <displayData>})`
 ____
 
 When you define a screen element as a table, you specify its data source (i.e. where the data comes from).

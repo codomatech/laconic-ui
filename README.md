@@ -24,6 +24,10 @@ npm i laconic-ui
 <script src="https://cdn.jsdelivr.net/npm/laconic-ui/dist/laconic-ui.browser.js"></script>
 ```
 
+## Documentation
+
+Check our [API document](API.md) and Examples.
+
 ## Examples
 
 `laconic` is usable as npm package as well as a plain old browser `<script/>`.
