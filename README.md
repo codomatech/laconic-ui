@@ -21,7 +21,8 @@ npm i laconic-ui
 ### browser
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/laconic-ui/dist/laconic-ui.browser.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@codomatech/laconic-ui/dist/deps/laconic-ui.deps.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@codomatech/laconic-ui/dist/laconic-ui.browser.js"></script>
 ```
 
 ## Documentation
@@ -44,3 +45,6 @@ Check out the [examples directory](examples).
 - **Minimal Theming**: `laconic` won't impose a specific theme on your app, you can
   customize the look and feel using CSS.
 - **Usable**: use it by a plain old browser script or within a complex npm workflow.
+
+---
+`laconic-ui` is a work of :heart: by [Codoma.tech](https://www.codoma.tech/).

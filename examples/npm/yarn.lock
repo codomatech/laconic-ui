@@ -23,6 +23,16 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
+"@codomatech/laconic-ui@^0.0.10-RC1":
+  version "0.0.10-RC1"
+  resolved "https://registry.yarnpkg.com/@codomatech/laconic-ui/-/laconic-ui-0.0.10-RC1.tgz#7cf081d172897c115638895f51769842dac660f3"
+  integrity sha512-7fbxJDsR7Nu65YZkJBQEjqFE6rGq4asczlkxMe/ZGIPlbdBIU4yKO9BZ/B634LLpfG61p+ofMUK9lh+bSabm4w==
+  dependencies:
+    eev "^0.1.5"
+    vue "^2.6.14"
+    vue-router "^3.5.3"
+    vuetify "^2.6.3"
+
 "@parcel/bundler-default@2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@parcel/bundler-default/-/bundler-default-2.4.0.tgz#a3b88131601821514cd932b3b2ada226d7d3404d"

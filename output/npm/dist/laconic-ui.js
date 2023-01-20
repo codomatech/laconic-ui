@@ -15,9 +15,6 @@ const Store = new Vue({
   }
 });
 
-// TODO create a command to populate fields of current screen, manipulate this.val here
-// probably consolidate goto-screen to take initial values
-
 // TODO replace this with a component whose template depends on curscreen
 function renderscreen (name, screen, fieldValues) {
   if (!name) return
@@ -370,9 +367,7 @@ const button = async (values, key, _) => {
   const comp = await Vue.component(`app-${key}`, {
     template: `
             <div class="lc button ${key}">
-                <v-btn @click="${values.onclick}">${
-  values.label
-}</v-btn>
+                <v-btn @click="${values.onclick}">${values.label}</v-btn>
             </div>
         `,
     methods: {

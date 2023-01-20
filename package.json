@@ -1,5 +1,5 @@
 {
-  "name": "laconic-ui",
+  "name": "@codomatech/laconic-ui",
   "description": "Low-code UI library to create apps's interface *fast*.",
   "main": "lib/interface.js",
   "unpkg": "interface.min.js",
@@ -22,5 +22,8 @@
   },
   "dependencies": {
     "minimist": "^1.2.6"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

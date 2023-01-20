@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@codomatech/laconic-ui": "^0.0.10-RC1",
     "eev": "^0.1.5",
     "laconic-ui": "^0.0.5",
     "minimist": "^1.2.6"

@@ -1,4 +1,4 @@
-import $lc from 'laconic-ui'
+import $lc from '@codomatech/laconic-ui'
 window.$lc = $lc
 
 $lc.ui.define({
