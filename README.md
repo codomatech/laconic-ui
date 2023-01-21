@@ -4,7 +4,7 @@
 
 **Top features:**
 **declarative definition** of your UI with **minimal boilerplate** and **best-of-breed tech** fully hidden under the hood.
-Check out our demo live [on codepen](https://codepen.io/codomatech/pen/LYOjdRb).
+Check out our [live demo](https://codepen.io/codomatech/full/LYOjdRb) and/or edit it [on codepen](https://codepen.io/codomatech/pen/LYOjdRb).
 
 **The framework is still evolving**. Please help us grow it to a stable release
 with your feature requests and bug reports. Please use the [issues](issues) for
